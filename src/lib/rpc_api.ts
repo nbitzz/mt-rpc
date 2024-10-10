@@ -12,12 +12,6 @@ browser.webRequest.onHeadersReceived.addListener((det) => {
             responseHeaders.splice(replace, 1)
     }
 
-    {
-        let replace = responseHeaders.findIndex(e => e.name.toLowerCase() == "content-security-policy")
-        if (replace > -1)
-            responseHeaders.splice(replace, 1)
-    }
-
     return {
         responseHeaders
     }
