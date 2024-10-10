@@ -3,7 +3,19 @@ import { APIUser, GatewayActivity } from "discord-api-types/v10"
 
 export type Presence = Omit<GatewayActivity, "id"|"name"|"created_at">
 
+const Discord: HTMLIFrameElement = document.getElementById("discord") as HTMLIFrameElement
+const Discord_frameId = browser.runtime.getFrameId(Discord)
+
 browser.webRequest.onHeadersReceived.addListener((det) => {
+    // make sure that this request is actually from rpc-slave's iframe
+    if (!(
+        det.tabId == -1 
+        && det.frameId == Discord_frameId
+        && det.documentUrl == window.location.toString()
+        && det.parentFrameId == 0
+    ))
+        return
+
     let responseHeaders = det.responseHeaders || []
 
     {
@@ -23,14 +35,12 @@ type RPCSlaveMessage =
 
 export class RPCCommunicator extends EventTarget {
 
-    readonly Discord: HTMLIFrameElement = document.getElementById("discord") as HTMLIFrameElement
     lastActivity: Presence | undefined = undefined
     user: APIUser | undefined = undefined
     usable: boolean = false
 
-    constructor(slaveIFrame?: HTMLIFrameElement) {
+    constructor() {
         super()
-        if (slaveIFrame) this.Discord = slaveIFrame
         window.addEventListener("message", e => this.onRpcSlaveMessage(e.data))
     }
 
@@ -51,7 +61,7 @@ export class RPCCommunicator extends EventTarget {
 
     login(clientId: string) {
         return new Promise<APIUser>((res, rej) => {
-            this.Discord.contentWindow!.postMessage({
+            Discord.contentWindow!.postMessage({
                 type: "login",
                 clientId
             },"*")
@@ -68,7 +78,7 @@ export class RPCCommunicator extends EventTarget {
         if (!this.usable) return;
         
         this.lastActivity = activity
-        this.Discord.contentWindow!.postMessage({
+        Discord.contentWindow!.postMessage({
             type: "set",
             activity
         },"*")
@@ -78,7 +88,7 @@ export class RPCCommunicator extends EventTarget {
         if (!this.usable) return;
 
         this.lastActivity = undefined
-        this.Discord.contentWindow!.postMessage({
+        Discord.contentWindow!.postMessage({
             type: "clear"
         },"*")
     }
@@ -90,19 +100,19 @@ export class RPCCommunicator extends EventTarget {
             let fail = () => { rej(); this.removeEventListener("load", load) }
             let load = () => { res(); this.removeEventListener("error", fail) }
             
-            this.Discord.addEventListener(
+            Discord.addEventListener(
                 "load",
                 load,
                 {once: true}
             )
 
-            this.Discord.addEventListener(
+            Discord.addEventListener(
                 "error",
                 fail,
                 {once: true}
             )
 
-            this.Discord.src = "https://discord.com/humans.txt?__MT_RPC"
+            Discord.src = "https://discord.com/humans.txt?__MT_RPC"
         })
     }
 }
