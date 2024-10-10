@@ -1,0 +1,14 @@
+{
+    "summary": {
+        "en-US": "Discord Rich Presence for Monkeytype"
+    },
+    "categories": [
+        "social-communication"
+    ],
+    "version": {
+        "license": "MIT"
+    },
+    "homepage": {
+        "en-US": "https://github.com/nbitzz/mt-rpc"
+    }
+}

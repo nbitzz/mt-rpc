@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="./manage.scss">
+        <script src="./manage.ts" type="module"></script>
+    </head>
+    <body>
+        <main>
+            <header class="split">
+                <h1>mt-rpc<span> <slot name="version">Version</slot></span></h1>
+                <a href="https://github.com/nbitzz/mt-rpc" target="_blank">github</a>
+            </header>
+            <hgroup>
+                <div class="split">
+                    <h2>rpc <slot name="userInfo" /></h2>
+                    <button id="resetRPCSlave">reconnect</button>
+                </div>
+                <p>
+                    You are <slot name="rpcState">&lt;unknown state&gt;</slot> Discord.
+                </p>
+            </hgroup>
+            <details>
+                <summary><h2>configure</h2></summary>
+                <slot name="configure"></slot>
+                <details class="settingsCategory">
+                    <summary><h3>danger zone</h3></summary>
+                    <div class="split">
+                        <div>
+                            <p>clear mt-rpc data</p>
+                            <p>Clear all data stored by the mt-rpc extension (mt-rpc configuration and caches).</p>
+                        </div>
+                        <button class="danger" id="reset">clear</button>
+                    </div>
+                </details>
+            </details>
+        </main>
+    </body>
+</html>

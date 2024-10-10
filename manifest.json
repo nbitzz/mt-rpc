@@ -1,0 +1,67 @@
+{
+    "manifest_version": 2,
+    "name": "mt-rpc",
+    "version": "1.0.0",
+    
+    "description": "Discord RPC for Monkeytype",
+
+    "icons": {
+        "24": "icons/icon-24.png",
+        "48": "icons/icon-48.png",
+        "128": "icons/icon-128.png"
+    },
+
+    "permissions": [
+        "https://discord.com/humans.txt?__MT_RPC",
+        "*://monkeytype.com/*",
+        "*://dev.monkeytype.com/*",
+        "ws://127.0.0.1:6463/*",
+        "ws://127.0.0.1:6464/*",
+        "ws://127.0.0.1:6465/*",
+        "ws://127.0.0.1:6466/*",
+        "ws://127.0.0.1:6467/*",
+        "ws://127.0.0.1:6468/*",
+        "ws://127.0.0.1:6469/*",
+        "ws://127.0.0.1:6470/*",
+        "ws://127.0.0.1:6471/*",
+        "ws://127.0.0.1:6472/*",
+        "ws://127.0.0.1:6473/*",
+        "webRequest",
+        "webRequestBlocking",
+        "storage"
+    ],
+    
+    "background": {
+        "page": "src/index.html",
+        "persistent": true
+    },
+
+    "content_scripts": [
+        {
+            "matches": ["https://discord.com/humans.txt?__MT_RPC"],
+            "js": ["src/injected/rpc_slave.ts"],
+            "world": "MAIN",
+            "all_frames": true
+        },
+        {
+            "matches": ["*://monkeytype.com/*", "*://dev.monkeytype.com/*"],
+            "js": ["src/injected/bridge/index.ts"],
+            "world": "MAIN"
+        },
+        {
+            "matches": ["*://monkeytype.com/*", "*://dev.monkeytype.com/*"],
+            "js": ["src/injected/escalator.ts"]
+        }
+    ],
+
+    "browser_action": {
+        "default_icon": "icons/icon-48.png",
+        "default_popup": "src/action/manage.html"
+    },
+
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{8d67f26d-9f9e-46bc-be4a-4a062e211c40}"
+        }
+    }
+}

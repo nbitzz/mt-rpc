@@ -1,0 +1,61 @@
+input, button {
+    color:var(--text-color);
+    padding:.5em 1em;
+    border-radius:var(--roundness);
+    background:var(--sub-alt-color);
+    height:min-content;
+    line-height:1.25;
+    appearance:none;
+    border:none;
+    font-size:1em;
+    font-family: inherit;
+    display:inline-flex;
+    gap:.5em;
+    align-items:baseline;
+    align-content:center;
+}
+
+button {
+    cursor:pointer;
+    transition:background-color .125s,color .125s,opacity .125s;
+    text-align:center;
+    justify-content:center;
+    user-select:none;
+    height:min-content;
+    line-height:1.25;
+    appearance:none;
+    border:none;
+    justify-content:center;
+    &.danger {
+        // what danger in settings page is
+        // maybe use this instead
+        //box-shadow: 0 0 0 .15em var(--error-color);
+        color: var(--bg-color);
+        background-color: var(--error-color);
+    }
+    &:not(:disabled) {
+        &.active {
+            background:var(--main-color);
+            color:var(--bg-color);
+            &:hover {
+                background:var(--text-color);
+            }
+            &:active {
+                background-color: var(--sub-color);
+                color: var(--bg-color);
+            }
+        }
+        &:hover {
+            color:var(--bg-color);
+            background:var(--text-color);
+        }
+        &:active {
+            background:var(--sub-color);
+            color:var(--bg-color)
+        }
+    }
+    &:disabled {
+        opacity:.33;
+        pointer-events: none;
+    }
+}
