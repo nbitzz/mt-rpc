@@ -5,10 +5,8 @@ import { getPageName, interceptFunction } from "../shared/util.js"
 export default function pushstate_shim() {
     history.pushState = interceptFunction(
         history.pushState.bind(history),
-        () => {
-            sendMessage("browse", {
-                page: getPageName()
-            })
+        (_a, _b, url) => {
+            sendMessage("browse", { page: getPageName(new URL(url || "", window.location.toString()).pathname) });
             return {mode: "passthrough"}
         }
     )

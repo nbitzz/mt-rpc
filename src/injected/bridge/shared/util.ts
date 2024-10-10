@@ -50,7 +50,7 @@ export function interceptFunction<T extends (...a:any[]) => any>(func: T, cb: (.
     }
 }
 
-export function getPageName() {
-    let split = window.location.pathname.replace(/^\/+/,"").split("/")[0]
+export function getPageName(uri: string = window.location.hostname) {
+    let split = uri.replace(/^\/+/,"").split("/")[0]
     return HelloMessage.shape.page.safeParse(split).data || "test"
 }
