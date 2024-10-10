@@ -5,9 +5,12 @@ export type Presence = Omit<GatewayActivity, "id"|"name"|"created_at">
 
 const Discord: HTMLIFrameElement = document.getElementById("discord") as HTMLIFrameElement
 const Discord_frameId = browser.runtime.getFrameId(Discord)
+const target = "https://discord.com/humans.txt?__MT_RPC"
 
 browser.webRequest.onHeadersReceived.addListener((det) => {
     // make sure that this request is actually from rpc-slave's iframe
+    // so that we don't relax security headers
+    // for other sites
     if (!(
         det.tabId == -1 
         && det.frameId == Discord_frameId
@@ -27,7 +30,7 @@ browser.webRequest.onHeadersReceived.addListener((det) => {
     return {
         responseHeaders
     }
-}, {urls: ["https://discord.com/humans.txt?__MT_RPC"]}, ["responseHeaders", "blocking"]);
+}, {urls: [target]}, ["responseHeaders", "blocking"]);
 
 type RPCSlaveMessage =
     {type: "ready", user: APIUser}
@@ -41,7 +44,11 @@ export class RPCCommunicator extends EventTarget {
 
     constructor() {
         super()
-        window.addEventListener("message", e => this.onRpcSlaveMessage(e.data))
+        window.addEventListener("message", e => {
+            if (e.origin !== "https://discord.com")
+                throw new Error(`attempt to return signal to rpc_api with disallowed origin ${e.origin}`)
+            this.onRpcSlaveMessage(e.data)
+        })
     }
 
     private onRpcSlaveMessage(e: RPCSlaveMessage) {
@@ -64,7 +71,7 @@ export class RPCCommunicator extends EventTarget {
             Discord.contentWindow!.postMessage({
                 type: "login",
                 clientId
-            },"*")
+            }, target)
 
             let disconnect = () => { rej(); this.removeEventListener("disconnected", disconnect) }
             let connect = () => { res(this.user!); this.removeEventListener("disconnected", disconnect) }
@@ -81,7 +88,7 @@ export class RPCCommunicator extends EventTarget {
         Discord.contentWindow!.postMessage({
             type: "set",
             activity
-        },"*")
+        }, target)
     }
 
     clearActivity() {
@@ -90,7 +97,7 @@ export class RPCCommunicator extends EventTarget {
         this.lastActivity = undefined
         Discord.contentWindow!.postMessage({
             type: "clear"
-        },"*")
+        }, target)
     }
 
     reset() {
@@ -112,7 +119,7 @@ export class RPCCommunicator extends EventTarget {
                 {once: true}
             )
 
-            Discord.src = "https://discord.com/humans.txt?__MT_RPC"
+            Discord.src = target
         })
     }
 }
