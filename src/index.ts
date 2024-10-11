@@ -40,7 +40,7 @@ subscribe((session) => {
     if (
         userState.type == "typing"
         && (
-            (
+            !(
                 !settings.rpc.requireWpm // if requireWPM is false, skip return
                 || session.stats.wpmHistory.length > 0
             )
