@@ -23,9 +23,12 @@ window.addEventListener("message", (activity) => {
     switch(activity.data.type) {
         case "login":
             rpcClient.login({clientId: activity.data.clientId})
+            break
         case "set":
             rpcClient.setActivity(activity.data.activity)
+            break
         case "clear":
             rpcClient.clearActivity()
+            break
     }
 })
